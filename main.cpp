@@ -60,32 +60,32 @@ void rot(real f, real g, real& c, real& s);
 matrix householder(row x, int k);
 
 void read(matrix& A, row& B);
-//типы узлов
+//С‚РёРїС‹ СѓР·Р»РѕРІ
 enum NODE_TYPE {
 	OPERATOR,
 	CONSTANT,
 	VARIABLE,
 	FUNCTION
 };
-//типы переменных
+//С‚РёРїС‹ РїРµСЂРµРјРµРЅРЅС‹С…
 enum VAR_TYPE {
 	X, Y
 };
-//структура производной
+//СЃС‚СЂСѓРєС‚СѓСЂР° РїСЂРѕРёР·РІРѕРґРЅРѕР№
 struct Deriv {
 	double df, val;
 	bool depend;
 };
-//структура узла дерева
+//СЃС‚СЂСѓРєС‚СѓСЂР° СѓР·Р»Р° РґРµСЂРµРІР°
 struct node {
 	shared_ptr<node> left, right;
 	NODE_TYPE type;
 	virtual double value(double x, double y) = 0;
 	virtual Deriv* diff(VAR_TYPE var, double x, double y) = 0;
 };
-//умный указатель
+//СѓРјРЅС‹Р№ СѓРєР°Р·Р°С‚РµР»СЊ
 typedef shared_ptr<node> ptr;
-//операторы
+//РѕРїРµСЂР°С‚РѕСЂС‹
 struct oper {
 	unsigned priority;
 	virtual double call(double a, double b) = 0;
@@ -95,7 +95,7 @@ struct oper {
 		return this;
 	}
 };
-//сумма
+//СЃСѓРјРјР°
 struct sum : oper {
 	sum() {
 		priority = 1;
@@ -111,7 +111,7 @@ struct sum : oper {
 		return ans;
 	}
 };
-//умножение
+//СѓРјРЅРѕР¶РµРЅРёРµ
 struct mult : oper {
 	mult() {
 		priority = 2;
@@ -138,7 +138,7 @@ struct mult : oper {
 		return ans;
 	}
 };
-//возведение в степень
+//РІРѕР·РІРµРґРµРЅРёРµ РІ СЃС‚РµРїРµРЅСЊ
 struct power : oper {
 	power() {
 		priority = 4;
@@ -162,7 +162,7 @@ struct power : oper {
 		return ans;
 	}
 };
-//оператор
+//РѕРїРµСЂР°С‚РѕСЂ
 struct op_node : node {
 	shared_ptr<oper> p;
 	op_node(oper* p) : p(shared_ptr<oper>(p)) {
@@ -180,7 +180,7 @@ struct op_node : node {
 		return ans;
 	}
 };
-//переменная
+//РїРµСЂРµРјРµРЅРЅР°СЏ
 struct var_node : node {
 	VAR_TYPE var;
 	var_node(VAR_TYPE var) : var(var)
@@ -199,7 +199,7 @@ struct var_node : node {
 		return ans;
 	}
 };
-//константа
+//РєРѕРЅСЃС‚Р°РЅС‚Р°
 struct con_node : node {
 	double val;
 	con_node(double value) : val(value)
@@ -217,7 +217,7 @@ struct con_node : node {
 		return ans;
 	}
 };
-// конфигуратор для DIIS
+// РєРѕРЅС„РёРіСѓСЂР°С‚РѕСЂ РґР»СЏ DIIS
 struct conf {
 	double eps, alpha;
 	int kmax;
@@ -226,7 +226,7 @@ istream& operator>>(istream& is, conf& c) {
 	is >> c.eps >> c.alpha >> c.kmax;
 	return is;
 }
-//класс функции
+//РєР»Р°СЃСЃ С„СѓРЅРєС†РёРё
 struct function {
 	function(const string& s);
 	virtual double call(double x, double y);
@@ -241,7 +241,7 @@ struct function {
 	}
 	point grad(const point &p);
 	point min(const conf &c);
-	// шаблонный метод для вычисления производной
+	// С€Р°Р±Р»РѕРЅРЅС‹Р№ РјРµС‚РѕРґ РґР»СЏ РІС‹С‡РёСЃР»РµРЅРёСЏ РїСЂРѕРёР·РІРѕРґРЅРѕР№
 	Deriv* difference(VAR_TYPE var, double x, double y) {
 		Deriv* a = root->diff(var, x, y);
 		Deriv* ans = new Deriv;
@@ -271,7 +271,7 @@ protected:
 		nodes.push_back(shared_ptr<T>(a));
 	}
 };
-//узел вложенной функции
+//СѓР·РµР» РІР»РѕР¶РµРЅРЅРѕР№ С„СѓРЅРєС†РёРё
 struct fun_node : node {
 	unique_ptr <function> fun;
 	fun_node(function* f) : fun(unique_ptr<function>(f)) {
@@ -284,8 +284,8 @@ struct fun_node : node {
 		return fun->difference(var, x, y);
 	}
 };
-//функции
-//синус
+//С„СѓРЅРєС†РёРё
+//СЃРёРЅСѓСЃ
 struct sin_fun : function {
 	using function::function;
 	double call(double x, double y) {
@@ -298,7 +298,7 @@ struct sin_fun : function {
 		return sin(val);
 	}
 };
-//косинус
+//РєРѕСЃРёРЅСѓСЃ
 struct cos_fun : function {
 	using function::function;
 	double call(double x, double y) {
@@ -311,7 +311,7 @@ struct cos_fun : function {
 		return cos(val);
 	}
 };
-//натуральный логарифм
+//РЅР°С‚СѓСЂР°Р»СЊРЅС‹Р№ Р»РѕРіР°СЂРёС„Рј
 struct ln_fun : function {
 	using function::function;
 	double call(double x, double y) {
@@ -324,7 +324,7 @@ struct ln_fun : function {
 		return log(val);
 	}
 };
-// фабрика особых функций
+// С„Р°Р±СЂРёРєР° РѕСЃРѕР±С‹С… С„СѓРЅРєС†РёР№
 function* create_fun(const string& name, const string& fun) {
 	if (name == "sin")
 		return new sin_fun(fun);
@@ -334,7 +334,7 @@ function* create_fun(const string& name, const string& fun) {
 		return new ln_fun(fun);
 	return new function(fun);
 }
-// фабрика операторов
+// С„Р°Р±СЂРёРєР° РѕРїРµСЂР°С‚РѕСЂРѕРІ
 oper* create_oper(char c) {
 	if (c == '+')
 		return new sum;
@@ -342,12 +342,12 @@ oper* create_oper(char c) {
 		return new mult;
 	if (c == '^')
 		return new power;
-	throw "unknown operator"; // ошибка
+	throw "unknown operator"; // РѕС€РёР±РєР°
 }
 double function::call(double x, double y) {
 	return root->value(x, y);
 }
-//построение дерева
+//РїРѕСЃС‚СЂРѕРµРЅРёРµ РґРµСЂРµРІР°
 unsigned function::build(int l, int r) {
 	if (l == r)
 		return l;
@@ -370,7 +370,7 @@ unsigned function::build(int l, int r) {
 	nodes[md]->right = nodes[build(md + 1, r)];
 	return md;
 }
-//Основной алгоритм
+//РћСЃРЅРѕРІРЅРѕР№ Р°Р»РіРѕСЂРёС‚Рј
 int main() {
 	setlocale(LC_ALL, "RUS");
 	freopen("input.txt", "r", stdin);
@@ -387,14 +387,14 @@ int main() {
 	}
 	return 0;
 }
-//конструктор функции
+//РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ С„СѓРЅРєС†РёРё
 function::function(const string& s) {
 	int state = 1;
 	string digit;
 	string func_name, func;
 	unsigned brack_cur;
 	unsigned brackets = 0;
-	//операторы
+	//РѕРїРµСЂР°С‚РѕСЂС‹
 	map<char, bool> mp;
 	mp['*'] = 1;
 	mp['+'] = 1;
@@ -491,7 +491,7 @@ function::function(const string& s) {
 	}
 	root = nodes[build(0, nodes.size() - 1)];
 }
-//минимум функции
+//РјРёРЅРёРјСѓРј С„СѓРЅРєС†РёРё
 point function::min(const conf &c) {
 	real eps = c.eps, step = c.alpha;
 	int dim = 5, end = c.kmax, n = 1;
@@ -521,10 +521,10 @@ point function::min(const conf &c) {
 		g[0] = grad(x[0]);
 		if (n == end) break;
 	}
-	if (n == end) cout << "Не сошлось\n";
+	if (n == end) cout << "РќРµ СЃРѕС€Р»РѕСЃСЊ\n";
 	return x[0];
 }
-//вычисление градиента в точке
+//РІС‹С‡РёСЃР»РµРЅРёРµ РіСЂР°РґРёРµРЅС‚Р° РІ С‚РѕС‡РєРµ
 point function::grad(const point& p) {
 	point g;
 	g.x = diff(X, p.x, p.y);
@@ -548,7 +548,7 @@ point diis(const matrix& A, vector<point>& x, int dim) {
 		r = r + c[i] * x[i];
 	return r;
 }
-//Вычисление псевдообратной матрицы
+//Р’С‹С‡РёСЃР»РµРЅРёРµ РїСЃРµРІРґРѕРѕР±СЂР°С‚РЅРѕР№ РјР°С‚СЂРёС†С‹
 void inverse(const matrix& A, matrix& A_) {
 	matrix u, s, v;
 	svd(A, u, s, v);
@@ -559,10 +559,10 @@ void inverse(const matrix& A, matrix& A_) {
 
 	A_ = v * r * ~u;
 }
-//Сингулярное разложение
+//РЎРёРЅРіСѓР»СЏСЂРЅРѕРµ СЂР°Р·Р»РѕР¶РµРЅРёРµ
 void svd(const matrix& A, matrix& U, matrix& S, matrix& V) {
 	int k = A.size();
-	// Бидиагонализация
+	// Р‘РёРґРёР°РіРѕРЅР°Р»РёР·Р°С†РёСЏ
 	matrix U1 = eye(k);
 	matrix V1 = eye(k);
 	matrix A2 = A;
@@ -577,7 +577,7 @@ void svd(const matrix& A, matrix& U, matrix& S, matrix& V) {
 			V1 = V1 * ~H2;
 		}
 	}
-	//QR скачки
+	//QR СЃРєР°С‡РєРё
 	matrix U2 = eye(U1.size());
 	matrix V2 = eye(V1.size());
 	matrix U3, V3, Q;
@@ -614,11 +614,11 @@ void svd(const matrix& A, matrix& U, matrix& S, matrix& V) {
 	V = V1 * V2;
 	S = A2;
 }
-//преобразование строки к матрице
+//РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ СЃС‚СЂРѕРєРё Рє РјР°С‚СЂРёС†Рµ
 matrix r2m(const row& x) {
 	return matrix(1, x);
 }
-//преобразование матрицы к строке
+//РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РјР°С‚СЂРёС†С‹ Рє СЃС‚СЂРѕРєРµ
 row m2r(const matrix& m) {
 	row r;
 	for0(i, m.size())
@@ -626,11 +626,11 @@ row m2r(const matrix& m) {
 		r.push_back(m[i][j]);
 	return r;
 }
-//знак числа
+//Р·РЅР°Рє С‡РёСЃР»Р°
 int sign(real a) {
 	return (a > 0 ? 1 : (a == 0 ? 0 : -1));
 }
-//взятие всех значений матрицы по модулю
+//РІР·СЏС‚РёРµ РІСЃРµС… Р·РЅР°С‡РµРЅРёР№ РјР°С‚СЂРёС†С‹ РїРѕ РјРѕРґСѓР»СЋ
 matrix abs(const matrix& m) {
 	int height = m.size(), width = m[0].size();
 	matrix r = create(width, height);
@@ -639,7 +639,7 @@ matrix abs(const matrix& m) {
 		r[i][j] = abs(m[i][j]);
 	return r;
 }
-//сумма модулей диагнальных элементов матрицы
+//СЃСѓРјРјР° РјРѕРґСѓР»РµР№ РґРёР°РіРЅР°Р»СЊРЅС‹С… СЌР»РµРјРµРЅС‚РѕРІ РјР°С‚СЂРёС†С‹
 real diag_sum(const matrix& m) {
 	real s = 0;
 	for0(i, m.size())
@@ -647,7 +647,7 @@ real diag_sum(const matrix& m) {
 			s += abs(m[i][i + 1]);
 	return s;
 }
-//округление к нулю
+//РѕРєСЂСѓРіР»РµРЅРёРµ Рє РЅСѓР»СЋ
 void round2zero(matrix& m, real l) {
 	for0(i, m.size()) {
 		for0(j, m[0].size()) {
@@ -656,12 +656,12 @@ void round2zero(matrix& m, real l) {
 		}
 	}
 }
-//Создаем матрицу width на height
+//РЎРѕР·РґР°РµРј РјР°С‚СЂРёС†Сѓ width РЅР° height
 matrix create(int width, int height) {
 	return matrix(height, row(width));
 }
 
-//умножение числа на матрицу
+//СѓРјРЅРѕР¶РµРЅРёРµ С‡РёСЃР»Р° РЅР° РјР°С‚СЂРёС†Сѓ
 matrix operator*(real a, const matrix& x) {
 	int height = x.size();
 	int width = x[0].size();
@@ -671,7 +671,7 @@ matrix operator*(real a, const matrix& x) {
 		r[i][j] = a * x[i][j];
 	return r;
 }
-//сложение матриц
+//СЃР»РѕР¶РµРЅРёРµ РјР°С‚СЂРёС†
 matrix operator+(const matrix& a, const matrix& b) {
 	int height = a.size(), width = a[0].size();
 	matrix r = create(width, height);
@@ -680,7 +680,7 @@ matrix operator+(const matrix& a, const matrix& b) {
 		r[i][j] = a[i][j] + b[i][j];
 	return r;
 }
-//перемножение матриц
+//РїРµСЂРµРјРЅРѕР¶РµРЅРёРµ РјР°С‚СЂРёС†
 matrix operator*(const matrix& a, const matrix& b) {
 	int height1 = a.size(), width1 = a[0].size(), height2 = b.size(), width2 = b[0].size();
 	matrix r = create(width2, height1);
@@ -693,7 +693,7 @@ matrix operator*(const matrix& a, const matrix& b) {
 	}
 	return r;
 }
-//скалярное произведение векторов
+//СЃРєР°Р»СЏСЂРЅРѕРµ РїСЂРѕРёР·РІРµРґРµРЅРёРµ РІРµРєС‚РѕСЂРѕРІ
 real dot(const row& x, const row& y) {
 	real result = 0;
 	for0(i, min(x.size(), y.size())) {
@@ -701,7 +701,7 @@ real dot(const row& x, const row& y) {
 	}
 	return result;
 }
-//транспонирование матриц
+//С‚СЂР°РЅСЃРїРѕРЅРёСЂРѕРІР°РЅРёРµ РјР°С‚СЂРёС†
 matrix operator~(const matrix& m) {
 	int height = m.size(), width = m[0].size();
 	matrix r = create(height, width);
@@ -710,45 +710,45 @@ matrix operator~(const matrix& m) {
 			r[j][i] = m[i][j];
 	return r;
 }
-//умножение точки на число
+//СѓРјРЅРѕР¶РµРЅРёРµ С‚РѕС‡РєРё РЅР° С‡РёСЃР»Рѕ
 point operator*(real k, const point& p) {
 	return { k * p.x, k * p.y };
 }
-//сложение точек
+//СЃР»РѕР¶РµРЅРёРµ С‚РѕС‡РµРє
 point operator+(const point& a, const point& b) {
 	return { a.x + b.x, a.y + b.y };
 }
-//Скалярное произведение векторов
+//РЎРєР°Р»СЏСЂРЅРѕРµ РїСЂРѕРёР·РІРµРґРµРЅРёРµ РІРµРєС‚РѕСЂРѕРІ
 real operator*(const point& a, const point& b) {
 	return a.x * b.x + a.y * b.y;
 }
-//вывод точки
+//РІС‹РІРѕРґ С‚РѕС‡РєРё
 ostream& operator<<(ostream& out, const point& p) {
 	out << '(' << p.x << ',' << p.y << ')';
 	return out;
 }
-//длина вектора до точки
+//РґР»РёРЅР° РІРµРєС‚РѕСЂР° РґРѕ С‚РѕС‡РєРё
 real length(const point& p) {
 	return sqrt(p.x * p.x + p.y * p.y);
 }
-//Градиентный спуск
+//Р“СЂР°РґРёРµРЅС‚РЅС‹Р№ СЃРїСѓСЃРє
 point descent(const point& x, const point& g, real step) {
 	return x + -step * g;
 }
-//сдвиг
+//СЃРґРІРёРі
 void shift(vector<point>& x, vector<point>& g, int n) {
 	for0(i, n - 1) {
 		x[n - i - 1] = x[n - i - 2];
 		g[n - i - 1] = g[n - i - 2];
 	}
 }
-//создание единичной матрицы размерности n
+//СЃРѕР·РґР°РЅРёРµ РµРґРёРЅРёС‡РЅРѕР№ РјР°С‚СЂРёС†С‹ СЂР°Р·РјРµСЂРЅРѕСЃС‚Рё n
 matrix eye(int n) {
 	matrix r = create(n, n);
 	for0(i, n) r[i][i] = 1;
 	return r;
 }
-//матрица преобразования Хаусхолдера
+//РјР°С‚СЂРёС†Р° РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ РҐР°СѓСЃС…РѕР»РґРµСЂР°
 matrix householder(row x, int k) {
 	int n = x.size();
 	row u(n);
@@ -760,7 +760,7 @@ matrix householder(row x, int k) {
 		u[i] = x[i];
 	return eye(n) + -2 / dot(u, u) * (~r2m(u) * r2m(u));
 }
-//получить k-ый столбец из матрицы
+//РїРѕР»СѓС‡РёС‚СЊ k-С‹Р№ СЃС‚РѕР»Р±РµС† РёР· РјР°С‚СЂРёС†С‹
 row column(const matrix& x, int k) {
 	row r;
 	for0(i, x.size())
